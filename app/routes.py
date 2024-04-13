@@ -10,11 +10,7 @@ SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
 @app.route('/')
 def index():
-    return render_template("hello.html")
-
-@app.route('/hello')
-def hello():
-    return "Hi Rebeckah"
+    return mySpot.authenticate()
 
 @app.route('/login')
 def login():
