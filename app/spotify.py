@@ -57,13 +57,10 @@ class spotifyHandler:
         "Content-Type": "application/json"
         }
         data = {
-            "context_uri": "spotify:album:5ht7ItJgpBH7W6vJ5BqpPr",
-            "offset": {
-                "position": 5
-            },
+            "context_uri": f"spotify:playlist:{playlistID}",
             "position_ms": 0
         }
-        response = requests.put(url=apiUrl, headers= headers, data=data)
+        response = requests.put(url=apiUrl, headers= headers, json=data)
         print(response.text)
         return response
     
