@@ -40,7 +40,10 @@ class spotifyHandler:
     def playlists(self, access_token):
     # return playlist names and ids
         response = requests.get("https://api.spotify.com/v1/me/playlists", headers= {"Authorization": "Bearer " + access_token})
-        items = response.json()['items']
+        try:
+            items = response.json()['items']
+        except:
+            return {}
         playlistDict = {}
         for item in items:
             playlistDict[item['name']] = item['id']

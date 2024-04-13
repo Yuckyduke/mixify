@@ -33,7 +33,7 @@ def webplayer():
     access_token = session.get('access_token')
     if not access_token:
         print("yo")
-        redirect(url_for('index'))
+        return redirect(url_for('index'))
     data = mySpot.playlists(access_token)
     print(data)
     return render_template("webplayer.html", access_token = access_token, data = data) 
