@@ -22,7 +22,7 @@ def callback():
     auth_code = request.args.get("code")
     if auth_code is None:
     # TODO: Handle error
-    return redirect(url_for("index"))
+        return redirect(url_for("index"))
     token_data = mySpot.getAccessToken(auth_code)
     accessToken = token_data.get("access_token")
     session['access_token'] = accessToken
