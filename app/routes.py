@@ -25,11 +25,11 @@ def callback():
     token_data = mySpot.getAccessToken(auth_code)
     accessToken = token_data.get("access_token")
     session['access_token'] = accessToken
-    return redirect(url_for("profile"))
+    return redirect(url_for("webplayer"))
 
-@app.route('/profile')
-def profile():
-    # Get user profile using the stored access token
+@app.route('/webplayer')
+def webplayer():
+    # use the access token to activate the webplayer
     access_token = session.get('access_token')
     if not access_token:
         print("yo")
