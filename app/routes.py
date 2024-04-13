@@ -22,7 +22,7 @@ def callback():
     auth_code = request.args.get("code")
     if auth_code is None:
         print("poop")
-    token_data = mySpot.get_access_token(auth_code)
+    token_data = mySpot.getAccessToken(auth_code)
     accessToken = token_data.get("access_token")
     session['access_token'] = accessToken
     return redirect(url_for("profile"))

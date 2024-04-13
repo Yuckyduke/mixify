@@ -7,6 +7,7 @@ import base64
 class spotifyHandler:
 
     def __init__(self, clientID: str) -> None:
+        #initialize a spotify handler with the required credentials
         self.clientID = clientID
         self._scope = "user-read-private user-read-email streaming playlist-read-private playlist-read-collaborative user-read-currently-playing user-modify-playback-state"
         self.redirect_uri = "http://127.0.0.1:5000/callback"
@@ -23,7 +24,7 @@ class spotifyHandler:
         authorizeUrl = self.spot_url + "authorize"
         return redirect(f'{authorizeUrl}?{urlencode(self.params)}')
     
-    def get_access_token(self, auth_code):
+    def getAccessToken(self, auth_code):
     # Exchange authorization code for access token
         headers = {
             'Authorization': f'Basic {base64.b64encode(f"{self.clientID}:{self.secret}".encode()).decode()}',
@@ -63,12 +64,15 @@ class spotifyHandler:
         # return jsonify({"tracks": returnArray})
         responseItems = response["tracks"]["items"]
         for i in range(len(response["tracks"]["items"])):
-            currentTrack = {"row": i, "name": responseItems[i]["track"]["name"], "id": responseItems[i]["track"]["uri"], "artists": responseItems[i]["track"]["artists"][0]["name"], "duration": responseItems[i]["track"]["duration_ms"]}
+            currentTrack = {"row": i, "name": responseItems[i]["track"]["name"], 
+                            "id": responseItems[i]["track"]["uri"], "artists": responseItems[i]["track"]["artists"][0]["name"], 
+                            "duration": responseItems[i]["track"]["duration_ms"]}
+            self.addSongToQueue(responseItems[i]["track"]["uri"], access_token)
             returnArray.append(currentTrack)
         return jsonify({"tracks": returnArray})
     
 
-    def add_song_to_queue(self, song_uri, access_token):
+    def addSongToQueue(self, song_uri, access_token):
     # Add the song to the queue
         add_to_queue_url = f'https://api.spotify.com/v1/me/player/queue?uri={song_uri}'
         headers = {'Authorization': f'Bearer {access_token}'}
