@@ -21,7 +21,8 @@ def callback():
     # Handle the callback from Spotify
     auth_code = request.args.get("code")
     if auth_code is None:
-        print("poop")
+    # TODO: Handle error
+    return redirect(url_for("index"))
     token_data = mySpot.getAccessToken(auth_code)
     accessToken = token_data.get("access_token")
     session['access_token'] = accessToken
@@ -32,6 +33,7 @@ def webplayer():
     # use the access token to activate the webplayer
     access_token = session.get('access_token')
     if not access_token:
+        # TODO: Log this error?
         print("yo")
         return redirect(url_for('index'))
     data = mySpot.playlists(access_token)
@@ -40,6 +42,7 @@ def webplayer():
 
 @app.route('/process_data', methods=['POST'])
 def process_data():
+  # TODO: Wrap this in a try:except:
     data = request.get_json()  # Assumes data is sent as JSON
     
     # Process the data (you can do more meaningful processing here)
