@@ -48,7 +48,20 @@ class spotifyHandler:
     
     def playPlaylist(self, playlistID, access_token):
         #play a playlist
-        response = requests.put("https://api.spotify.com/v1/me/player/play", headers= {"Authorization": "Bearer " + access_token}, data={"context_uri": f"spotify:playlist:{playlistID}"})
+        apiUrl = "https://api.spotify.com/v1/me/player/play" 
+        headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+        }
+        data = {
+            "context_uri": "spotify:album:5ht7ItJgpBH7W6vJ5BqpPr",
+            "offset": {
+                "position": 5
+            },
+            "position_ms": 0
+        }
+        response = requests.put(url=apiUrl, headers= headers, data=data)
+        print(response.text)
         return response
     
     def getPlaylistSongs(self, access_token, playlist_id):
@@ -67,8 +80,10 @@ class spotifyHandler:
             currentTrack = {"row": i, "name": responseItems[i]["track"]["name"], 
                             "id": responseItems[i]["track"]["uri"], "artists": responseItems[i]["track"]["artists"][0]["name"], 
                             "duration": responseItems[i]["track"]["duration_ms"]}
-            self.addSongToQueue(responseItems[i]["track"]["uri"], access_token)
+            #self.addSongToQueue(responseItems[i]["track"]["uri"], access_token)
             returnArray.append(currentTrack)
+        print(playlist_id)
+        self.playPlaylist(playlist_id, access_token)
         return jsonify({"tracks": returnArray})
     
 
@@ -77,7 +92,6 @@ class spotifyHandler:
         add_to_queue_url = f'https://api.spotify.com/v1/me/player/queue?uri={song_uri}'
         headers = {'Authorization': f'Bearer {access_token}'}
         response = requests.post(url=add_to_queue_url, headers=headers)
-
         if response.status_code == 202:
             print("Song added to the queue successfully.")
         else:
