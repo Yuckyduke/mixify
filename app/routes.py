@@ -58,16 +58,3 @@ def getSongDuration():
     test = mySpot.getSongDuration(access_token=session.get("access_token"), songURI=data)
     print(test)
     return test
- 
-def get_access_token(auth_code):
-    # Exchange authorization code for access token
-    headers = {
-        'Authorization': f'Basic {base64.b64encode(f"{mySpot.clientID}:{mySpot.secret}".encode()).decode()}',
-    }
-    data = {
-        'grant_type': 'authorization_code',
-        'code': auth_code,
-        'redirect_uri': mySpot.redirect_uri,
-    }
-    response = requests.post(SPOTIFY_TOKEN_URL, headers=headers, data=data)
-    return response.json()
