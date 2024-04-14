@@ -18,6 +18,7 @@
       <button id="lastSong">Last Song</button>
       <button id="togglePlay">Play/Pause</button>
       <button id="nextSong">Next Song</button>
+      <button id="saveStartTime">Save Start Time</button>
     </div>
     <div class="slider-container">
       <div id="current-time" class="current-time">0:00</div>
@@ -49,6 +50,7 @@
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script>
     let secondCounter;
+    let currentTrack;
     window.onSpotifyWebPlaybackSDKReady = () => {
       const token = {{ access_token| tojson}};
       const player = new Spotify.Player({
@@ -101,6 +103,11 @@
     document.getElementById('lastSong').onclick = function () {
       player.previousTrack();
     };
+    document.getElementById("saveStartTime").onclick = function() {
+      var dict = JSON.parse(window.localStorage.getItem("storedDict"));
+      dict[currentTrack.uri].start = parseInt(trackPosition);
+
+    }
     player.addListener('player_state_changed', ({
       position,
       duration,
@@ -114,8 +121,8 @@
       document.getElementById("songArt").src = current_track.album.images[0].url;
       document.getElementById("total-duration").textContent = timeConverter(duration);
       document.getElementById("current-time").textContent = timeConverter(trackPosition);
-      let currentTrack = current_track;
-      let currentTrackURI = current_track.uri;
+      currentTrack = current_track;
+      currentTrackURI = current_track.uri;
       highlightTrack(current_track.name, current_track.artists[0]["name"]);
     });
 
@@ -139,7 +146,10 @@
     </table>
   <script>
     document.getElementById("Save").onclick = function() {
-      let savedPlaylist = hashPlaylist();
+      // this is troll but think if we use the ID we could cache all of them.
+      // Here it will overwrite whichever
+      var dict = JSON.parse(window.localStorage.getItem("storedDict"));
+      let savedPlaylist = hashPlaylist(dict);
       console.log(savedPlaylist);
     }
   </script>
