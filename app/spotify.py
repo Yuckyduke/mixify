@@ -1,5 +1,4 @@
 import requests
-import random
 from flask import redirect, request, jsonify
 from urllib.parse import urlencode
 import base64
