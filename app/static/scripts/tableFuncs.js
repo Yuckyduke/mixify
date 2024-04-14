@@ -86,10 +86,17 @@ function getStartStop(song, artist){
       })
   }
 
-  function hashPlaylist(){
+  function hashPlaylist(inDict){
     table = document.getElementById("Playlist");
     tr = table.getElementsByTagName("tr");
     var dict = {};
+    // need to check if the dictionary is created yet
+    // will want to keep this dictionary and the one produced from the table
+    // in sync somehow.
+    if (typeof(inDict) != 'undefined') {
+      console.log("RETRIEVED");
+      dict = inDict;
+    }
     for (i=1; i<tr.length; i++) {
       row = tr[i].getElementsByTagName("td");
       uri = row[3].innerText;
@@ -106,5 +113,6 @@ function getStartStop(song, artist){
         return;
       }
     }
+    window.localStorage.setItem("storedDict", JSON.stringify(dict));
     return dict
 }
