@@ -1,8 +1,6 @@
 from app import app
 from flask import render_template, request, url_for, redirect, session
 from app import spotify
-import base64
-import requests
 
 
 mySpot = spotify.spotifyHandler("01f4d277eb0a45a9a5fbd08cce6a6afe")
@@ -34,8 +32,8 @@ def webplayer():
     access_token = session.get('access_token')
     if not access_token:
         # TODO: Log this error?
-        print("yo")
-        return redirect(url_for('index'))
+        print("Access code was not obtained")
+        return redirect(url_for('index')) # i think this would get stuck in an infinite loop
     data = mySpot.playlists(access_token)
     print(data)
     return render_template("webplayer.html", access_token = access_token, data = data) 
@@ -44,13 +42,6 @@ def webplayer():
 def process_data():
   # TODO: Wrap this in a try:except:
     data = request.get_json()  # Assumes data is sent as JSON
-    
-    # Process the data (you can do more meaningful processing here)
-    #result = {'status': 'success', 'message': 'Data received successfully', 'processed_data': data}
-    #print(data["playlist"])
-    #return mySpot.getPlaylistSongs(se(ssion.get("access_token"), result["processed_data"])
-    #mySpot.clearQueue(session.get("access_token"))
-    #mySpot.queuePlaylist(session.get("access_token"), playlist)
     return mySpot.getPlaylistSongs(session.get("access_token"), data["playlist"]) 
 
 @app.route('/getSongDuration', methods=['POST'])
