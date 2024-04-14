@@ -4,6 +4,9 @@
 <head>
   <title> Mixify</title>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/styles.css') }}">
+  <script src="{{ url_for('static', filename='scripts/webplayerFuncs.js')}}"></script>
+  <script src="{{ url_for('static', filename='scripts/tableFuncs.js')}}"></script>
+      
 </head>
 
 <body>
@@ -38,7 +41,6 @@
         playlistDropdown.add(option);
       }
     </script>
-    <script src="{{ url_for('static', filename='scripts/tableFuncs.js')}}"></script>
     <script>
       document.getElementById("playlistDropdown").addEventListener("change", updatePlaylist);
     </script>
@@ -115,14 +117,11 @@
       let currentTrack = current_track;
       let currentTrackURI = current_track.uri;
       highlightTrack(current_track.name, current_track.artists[0]["name"]);
-      getStartStop(current_track.name, current_track.artists[0]["name"]);
-      console.log(current_track.name + current_track.artists[0]["name"]);
     });
 
     player.connect();
   }
   </script>
-  <script src="{{ url_for('static', filename='scripts/webplayerFuncs.js')}}"></script>
     <div class="btn-group button">
     <button id="Save"> Save </button>
     <button id="Play Playlist"> Play Playlist </button>
@@ -139,18 +138,9 @@
       </tr>
     </table>
   <script>
-    document.getElementById("Save").onclick = function () {
-      dict = {}
-      table = document.getElementById("Playlist");
-      tr = table.getElementsByTagName("tr");
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td");
-        if (td) {
-          dict[td[2].innerText] = [td[1].innerText, td[4].innerText, td[5].innerText];
-
-        }
-      }
-      console.log(dict);
+    document.getElementById("Save").onclick = function() {
+      let savedPlaylist = hashPlaylist();
+      console.log(savedPlaylist);
     }
   </script>
 </body>

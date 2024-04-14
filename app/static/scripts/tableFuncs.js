@@ -85,3 +85,14 @@ function getStartStop(song, artist){
         document.body.appendChild(table);
       })
   }
+
+  function hashPlaylist(){
+    table = document.getElementById("Playlist");
+    tr = table.getElementsByTagName("tr");
+    var dict = {};
+    for (i=0; i<tr.length; i++) {
+      row = tr[i].getElementsByTagName("td");
+      dict[row[3].innerText] = [row[4].innerText, row[5].innerText, row[6].innerText]
+    }
+    return dict
+  }
