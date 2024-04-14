@@ -90,9 +90,21 @@ function getStartStop(song, artist){
     table = document.getElementById("Playlist");
     tr = table.getElementsByTagName("tr");
     var dict = {};
-    for (i=0; i<tr.length; i++) {
+    for (i=1; i<tr.length; i++) {
       row = tr[i].getElementsByTagName("td");
-      dict[row[3].innerText] = [row[4].innerText, row[5].innerText, row[6].innerText]
+      uri = row[3].innerText;
+      duration = parseInt(row[4].innerText);
+      start = parseInt(row[5].innerText);
+      end = parseInt(row[6].innerText);
+      console.log(start);
+      console.log(end);
+      if (start <= duration & end <= duration & start <= end & start >= 0 & end >= 0){
+        dict[uri] = [duration, start, end];
+      }
+      else {
+        alert("Invalid start and stops");
+        return;
+      }
     }
     return dict
-  }
+}
