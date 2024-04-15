@@ -39,8 +39,12 @@ class spotifyHandler:
             'code': auth_code,
             'redirect_uri': self.redirect_uri,
         }
-        response = requests.post(self.spotifyTokenURL, headers=headers, data=data)
-        return response.json()
+        try:
+            response = requests.post(self.spotifyTokenURL, headers=headers, data=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            raise SystemExit(e)
 
     def playlists(self, access_token):
     # return playlist names and ids
