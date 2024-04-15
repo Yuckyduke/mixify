@@ -15,9 +15,15 @@ class spotifyHandler:
         self.secret = "bd5fb29c425c4d108f34f44a78bebb52"
         self.spotifyTokenURL = 'https://accounts.spotify.com/api/token'
 
-    def getCode(self) -> None:
-        self.code = requests.get(url = self.spot_url + 'login',params= {"client_id":self.clientID, "response_type":"code", "redirect_uri": self.redirect_uri, "scope": self._scope}) 
-        return self.code
+    def getCode(self) -> str:
+        try:
+            response = requests.get(url = self.spot_url + 'login',params= {"client_id":self.clientID, "response_type":"code", "redirect_uri": self.redirect_uri, "scope": self._scope})
+            if response.status_code == requests.codes.ok:
+                self.code = response
+                return self.code
+        except requests.exceptions.RequestException as e:
+            print("Error:", e)
+
  
     def authenticate(self) -> None:
         authorizeUrl = self.spot_url + "authorize"
