@@ -25,11 +25,16 @@ class spotifyHandler:
         self.secret = "bd5fb29c425c4d108f34f44a78bebb52"
         self.spotifyTokenURL = 'https://accounts.spotify.com/api/token'
 
-    def authenticate(self) -> None:
+    def authenticate(self) -> redirect:
+        """
+        The authorize URL will send a callback to the self.redirect_url
+
+        See routes.py for how this is handled 
+        """
         authorizeUrl = self.spot_url + "authorize"
         return redirect(f'{authorizeUrl}?{urlencode(self.params)}')
     
-    def getAccessToken(self, auth_code):
+    def getAccessToken(self, auth_code) -> requests.Response:
     # Exchange authorization code for access token
         headers = {
             'Authorization': f'Basic {base64.b64encode(f"{self.clientID}:{self.secret}".encode()).decode()}',
@@ -46,8 +51,12 @@ class spotifyHandler:
         except requests.exceptions.HTTPError as e:
             raise SystemExit(e)
 
-    def playlists(self, access_token):
-    # return playlist names and ids
+    def playlists(self, access_token) -> dict:
+        """
+        Call playlist endpoint to retreive users playlist 
+    
+        Returns a playlistName: playlistID dictionary
+        """
         try:
             response = requests.get("https://api.spotify.com/v1/me/playlists", headers= {"Authorization": "Bearer " + access_token})
             if response.status_code == requests.codes.ok:
@@ -63,7 +72,10 @@ class spotifyHandler:
             return {}
     
     def playPlaylist(self, playlistID, access_token):
-        #play a playlist
+        """
+        Calls the player play endpoint PUT
+        Used with the get Playlists songs to also play the playlist
+        """
         apiUrl = "https://api.spotify.com/v1/me/player/play" 
         headers = {
         "Authorization": f"Bearer {access_token}",
@@ -84,7 +96,11 @@ class spotifyHandler:
             print("Error:", e)
     
     def getPlaylistSongs(self, access_token, playlist_id):
-        # return the songs of a playlist
+        """
+        Get the songs of a playlist - get request with playlist id
+
+        If the playlist is obtained it will send a put request to play the playlist 
+        """
         response = requests.get(f"https://api.spotify.com/v1/playlists/{playlist_id}", headers ={"Authorization": "Bearer " + access_token}).json()
         returnArray = []
         try:
@@ -104,7 +120,9 @@ class spotifyHandler:
     
 
     def addSongToQueue(self, song_uri, access_token):
-    # Add the song to the queue
+        """
+        OLD function DONT USE
+        """
         add_to_queue_url = f'https://api.spotify.com/v1/me/player/queue?uri={song_uri}'
         headers = {'Authorization': f'Bearer {access_token}'}
         response = requests.post(url=add_to_queue_url, headers=headers)
@@ -114,22 +132,32 @@ class spotifyHandler:
             print(f"Failed to add song to the queue. Status code: {response.status_code}") 
 
     def getQueue(self, access_token):
-        #return the queue
+        """
+        OLD function DONT USE
+        """
         response = requests.get("https://api.spotify.com/v1/me/player/queue", headers ={"Authorization": "Bearer " + access_token}).json()
         return response
 
     def getSongDuration(self, songURI, access_token):
+        """
+        OLD FUNCTION DONT USE
+        """
         songID = self.uriToID(songURI)
         response = requests.get(f"https://api.spotify.com/v1/tracks/{songID}", headers ={"Authorization": "Bearer " + access_token}).json()
         return str(response["duration_ms"])
 
     def uriToID(self, songURI):
+        """
+        OLD Function don't use
+        """
         test = songURI[songURI.find(":") + 1:]
         test = test[test.find(":") + 1:]
         return test
 
     def clearQueue(self, access_token):
-        #clear the current queue
+        """
+        OLD function don't use
+        """
         while self.getQueue(access_token):
             requests.post(url = "https://api.spotify.com/v1/me/player/next", headers = {"Authorization": "Bearer " + access_token})
 
