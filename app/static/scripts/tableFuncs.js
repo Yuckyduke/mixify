@@ -105,7 +105,7 @@ function getStartStop(song, artist){
 
   function updateCache(changes) {
     var globalCache = loadDictionary();
-    if (typeof(globalCache) == 'undefined') {
+    if (typeof(globalCache) === 'undefined') {
       globalCache = {};
     }
     globalCache[document.getElementById("playlistDropdown").value] = changes;
@@ -127,8 +127,6 @@ function getStartStop(song, artist){
       duration = parseInt(row[4].innerText);
       start = parseInt(row[5].innerText);
       end = parseInt(row[6].innerText);
-      console.log(start);
-      console.log(end);
       if (start <= duration & end <= duration & start <= end & start >= 0 & end >= 0){
         dict[uri] = [duration, start, end];
       }

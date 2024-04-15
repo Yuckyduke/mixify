@@ -38,15 +38,19 @@ class spotifyHandler:
 
     def playlists(self, access_token):
     # return playlist names and ids
-        response = requests.get("https://api.spotify.com/v1/me/playlists", headers= {"Authorization": "Bearer " + access_token})
         try:
-            items = response.json()['items']
-        except:
+            response = requests.get("https://api.spotify.com/v1/me/playlists", headers= {"Authorization": "Bearer " + access_token})
+            if response.status_code == requests.codes.ok:
+                items = response.json()['items']
+                playlistDict = {}
+                for item in items:
+                    playlistDict[item['name']] = item['id']
+                return playlistDict
+            else:
+                response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            print("Error", e)
             return {}
-        playlistDict = {}
-        for item in items:
-            playlistDict[item['name']] = item['id']
-        return playlistDict
     
     def playPlaylist(self, playlistID, access_token):
         #play a playlist
@@ -59,22 +63,25 @@ class spotifyHandler:
             "context_uri": f"spotify:playlist:{playlistID}",
             "position_ms": 0
         }
-        response = requests.put(url=apiUrl, headers= headers, json=data)
-        print(response.text)
-        return response
+        try:
+            response = requests.put(url=apiUrl, headers= headers, json=data)
+            if response.status_code == requests.codes.ok:
+                print("PUT request was succesfull")
+            else:
+                response.raise_for_status()
+        #return response
+        except requests.exceptions.RequestException as e:
+            print("Error:", e)
     
     def getPlaylistSongs(self, access_token, playlist_id):
         # return the songs of a playlist
         response = requests.get(f"https://api.spotify.com/v1/playlists/{playlist_id}", headers ={"Authorization": "Bearer " + access_token}).json()
         returnArray = []
-        # while response["tracks"]["next"]:
-        # for item in response["tracks"]["items"]:
-        #     currentTrack = {"name": item["track"]["name"], "id": item["track"]["uri"], "artists": item["track"]["artists"][0]["name"], "duration": item["track"]["duration_ms"]}
-        #     # self.add_song_to_queue(item["track"]["uri"], access_token)
-        #     returnArray.append(currentTrack)
-        # self.playPlaylist(playlistID=playlist_id, access_token=access_token)
-        # return jsonify({"tracks": returnArray})
-        responseItems = response["tracks"]["items"]
+        try:
+            responseItems = response["tracks"]["items"]
+        except:
+            print("Unable to obtain playlist")
+            return
         for i in range(len(response["tracks"]["items"])):
             currentTrack = {"row": i, "name": responseItems[i]["track"]["name"], 
                             "id": responseItems[i]["track"]["uri"], "artists": responseItems[i]["track"]["artists"][0]["name"], 
