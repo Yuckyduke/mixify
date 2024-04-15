@@ -18,7 +18,6 @@
       <button id="lastSong">Last Song</button>
       <button id="togglePlay">Play/Pause</button>
       <button id="nextSong">Next Song</button>
-      <button id="saveStartTime">Save Start Time</button>
     </div>
     <div class="slider-container">
       <div id="current-time" class="current-time">0:00</div>
@@ -103,11 +102,6 @@
     document.getElementById('lastSong').onclick = function () {
       player.previousTrack();
     };
-    document.getElementById("saveStartTime").onclick = function() {
-      var dict = JSON.parse(window.localStorage.getItem("storedDict"));
-      dict[currentTrack.uri].start = parseInt(trackPosition);
-
-    }
     player.addListener('player_state_changed', ({
       position,
       duration,
@@ -146,11 +140,7 @@
     </table>
   <script>
     document.getElementById("Save").onclick = function() {
-      // this is troll but think if we use the ID we could cache all of them.
-      // Here it will overwrite whichever
-      var dict = JSON.parse(window.localStorage.getItem("storedDict"));
-      let savedPlaylist = hashPlaylist(dict);
-      console.log(savedPlaylist);
+      let savedPlaylist = hashPlaylist();
     }
   </script>
 </body>

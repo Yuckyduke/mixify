@@ -36,7 +36,9 @@ function getStartStop(song, artist){
 }
 
   function updatePlaylist() {
-    const currentPlaylist = { "playlist": playlists[document.getElementById("playlistDropdown").value] };
+    const currentPlaylistName = document.getElementById("playlistDropdown").value
+    const currentPlaylist = { "playlist": playlists[currentPlaylistName] };
+    const globalCache = loadDictionary();
     fetch('/process_data', {
       method: 'POST',
       headers: {
@@ -69,14 +71,22 @@ function getStartStop(song, artist){
           cell = row.insertCell();
           cell.textContent = item["duration"];
           for (let i = 0; i < 2; i++) {
-            if (i == 0){
+            const cell = row.insertCell();
+            if (i == 0) {
+              if(isCacheValid()) {
+                cell.textContent = globalCache[currentPlaylistName][item["id"]][1];
+              } else {
+                cell.textContent = 0;
+              }
               playlistDict["start"] = 0
-            }
-            else{
+            } else {
+              if (isCacheValid()) {
+                cell.textContent = globalCache[currentPlaylistName][item["id"]][2];
+              } else {
+                cell.textContent = 0;
+              }
               playlistDict["stop"] = 0;
             }
-            const cell = row.insertCell();
-            cell.textContent = 0;
             cell.setAttribute('contenteditable', 'true');
           }
         });
@@ -86,17 +96,31 @@ function getStartStop(song, artist){
       })
   }
 
-  function hashPlaylist(inDict){
+  function isCacheValid() {
+    const currentPlaylistName = document.getElementById("playlistDropdown").value
+    const globalCache = loadDictionary()
+    return ((typeof(globalCache) != 'undefined') && 
+    (typeof(globalCache[currentPlaylistName]) != 'undefined'))
+  }
+
+  function updateCache(changes) {
+    var globalCache = loadDictionary();
+    if (typeof(globalCache) == 'undefined') {
+      globalCache = {};
+    }
+    globalCache[document.getElementById("playlistDropdown").value] = changes;
+    window.localStorage.setItem("storedDict", JSON.stringify(globalCache));
+    console.log(globalCache);
+  }
+
+  function loadDictionary() {
+    return JSON.parse(window.localStorage.getItem("storedDict"));
+  }
+
+  function hashPlaylist() {
     table = document.getElementById("Playlist");
     tr = table.getElementsByTagName("tr");
     var dict = {};
-    // need to check if the dictionary is created yet
-    // will want to keep this dictionary and the one produced from the table
-    // in sync somehow.
-    if (typeof(inDict) != 'undefined') {
-      console.log("RETRIEVED");
-      dict = inDict;
-    }
     for (i=1; i<tr.length; i++) {
       row = tr[i].getElementsByTagName("td");
       uri = row[3].innerText;
@@ -113,6 +137,6 @@ function getStartStop(song, artist){
         return;
       }
     }
-    window.localStorage.setItem("storedDict", JSON.stringify(dict));
+    updateCache(dict);
     return dict
 }
