@@ -17,24 +17,6 @@ function highlightTrack(song, artist) {
     }
   }
 
-function getStartStop(song, artist){
-  table = document.getElementById("Playlist");
-  tr = table.getElementsByTagName("tr");
-
-  for (i=0; i<tr.length; i++) {
-    songName = tr[i].getElementsByTagName("td")[1];
-    artistName = tr[i].getElementsByTagName("td")[2];
-    if (songName && artistName) {
-      songTxtValue = songName.textContent || songName.innerText;
-      artistTxtValue = artistName.textContent || artistName.textContent
-      if (songTxtValue == song && artistTxtValue == artist) {
-        console.log([parseInt(tr[i].getElementsByTagName("td")[5].innerText), parseInt(tr[i].getElementsByTagName("td")[6].innerText)]);
-        return;
-      }
-    }
-  }
-}
-
   function updatePlaylist() {
     const currentPlaylistName = document.getElementById("playlistDropdown").value
     const currentPlaylist = { "playlist": playlists[currentPlaylistName] };

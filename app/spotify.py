@@ -7,6 +7,16 @@ class spotifyHandler:
 
     def __init__(self, clientID: str) -> None:
         #initialize a spotify handler with the required credentials
+        """
+        Initialze a spotify handler with the required credentials
+
+        Scope: Gives permissions for api to do certain things
+        Redirect_URI: Will handle callback from spotify
+        SpotURl: the start of login endpoint
+        Params: Dictionary for redirect_URL, SpotURL, and params
+        Secret: Secret key to exchange for access Token
+        spotify Token URL: Start point for api endpoints
+        """
         self.clientID = clientID
         self._scope = "user-read-private user-read-email streaming playlist-read-private playlist-read-collaborative user-read-currently-playing user-modify-playback-state"
         self.redirect_uri = "http://127.0.0.1:5000/callback"
@@ -15,16 +25,6 @@ class spotifyHandler:
         self.secret = "bd5fb29c425c4d108f34f44a78bebb52"
         self.spotifyTokenURL = 'https://accounts.spotify.com/api/token'
 
-    def getCode(self) -> str:
-        try:
-            response = requests.get(url = self.spot_url + 'login',params= {"client_id":self.clientID, "response_type":"code", "redirect_uri": self.redirect_uri, "scope": self._scope})
-            if response.status_code == requests.codes.ok:
-                self.code = response
-                return self.code
-        except requests.exceptions.RequestException as e:
-            print("Error:", e)
-
- 
     def authenticate(self) -> None:
         authorizeUrl = self.spot_url + "authorize"
         return redirect(f'{authorizeUrl}?{urlencode(self.params)}')
