@@ -33,16 +33,22 @@ def webplayer():
     if not access_token:
         # TODO: Log this error?
         print("Access code was not obtained")
-        return redirect(url_for('index')) # i think this would get stuck in an infinite loop
+        return redirect(url_for('error'))
     data = mySpot.playlists(access_token)
-    print(data)
     return render_template("webplayer.html", access_token = access_token, data = data) 
 
 @app.route('/process_data', methods=['POST'])
 def process_data():
   # TODO: Wrap this in a try:except:
     data = request.get_json()  # Assumes data is sent as JSON
-    return mySpot.getPlaylistSongs(session.get("access_token"), data["playlist"]) 
+    return mySpot.getPlaylistSongs(session.get("access_token"), data["playlist"])
+
+@app.route('/error')
+def error():
+    """
+    Error page if authorize does not work
+    """
+    return "Authorization Code was not Obtatined"
 
 @app.route('/getSongDuration', methods=['POST'])
 def getSongDuration():

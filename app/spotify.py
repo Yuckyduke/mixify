@@ -1,5 +1,5 @@
 import requests
-from flask import redirect, request, jsonify
+from flask import redirect, jsonify
 from urllib.parse import urlencode
 import base64
 
@@ -114,7 +114,6 @@ class spotifyHandler:
                             "duration": responseItems[i]["track"]["duration_ms"]}
             #self.addSongToQueue(responseItems[i]["track"]["uri"], access_token)
             returnArray.append(currentTrack)
-        print(playlist_id)
         self.playPlaylist(playlist_id, access_token)
         return jsonify({"tracks": returnArray})
     

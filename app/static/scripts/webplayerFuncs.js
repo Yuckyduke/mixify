@@ -1,7 +1,3 @@
-function updateSeek(msTime) {
-    return (trackPosition/songDuration) * 100;
-  }
-
   function timeConverter(msTime){
     seconds = Math.floor((msTime % 60000)/1000);
     minutes = Math.floor(msTime/60000);
