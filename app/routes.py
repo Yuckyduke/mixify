@@ -6,12 +6,9 @@ from app import spotify
 mySpot = spotify.spotifyHandler("01f4d277eb0a45a9a5fbd08cce6a6afe")
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
+#decorator linking webpage and function
 @app.route('/')
 def index():
-    return mySpot.authenticate()
-
-@app.route('/login')
-def login():
     return mySpot.authenticate()
 
 @app.route('/callback/')

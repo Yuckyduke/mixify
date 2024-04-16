@@ -133,8 +133,6 @@ function hashPlaylist() {
     duration = parseInt(row[4].innerText);
     start = parseInt(row[5].innerText);
     end = parseInt(row[6].innerText);
-    console.log(start);
-    console.log(end);
     if (start <= duration & end <= duration &
         start <= end & start >= 0 & end >= 0) {
       dict[uri] = [duration, start, end];
