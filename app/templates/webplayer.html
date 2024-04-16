@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html></html>
-
 <head>
   <title> Mixify</title>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/styles.css') }}">
   <script src="{{ url_for('static', filename='scripts/webplayerFuncs.js')}}"></script>
   <script src="{{ url_for('static', filename='scripts/tableFuncs.js')}}"></script>
-      
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+  <script>
+  window.onSpotifyWebPlaybackSDKReady = () => {
+    const token = "{{ access_token }}";
+    const player = new Spotify.Player({
+    name: 'Mixify',
+    getOAuthToken: cb => { cb(token); },
+    volume: 1.0
+    });
+    handleSpotify(player);
+  }
+  </script>
 </head>
-
 <body>
   <h1 style="font-family: monospace, monaco;">Mixify</h1>
     <div class = "musicPlayer"> 
@@ -19,123 +27,33 @@
       <button id="togglePlay">Play/Pause</button>
       <button id="nextSong">Next Song</button>
     </div>
-    <div class="slider-container">
-      <div id="current-time" class="current-time">0:00</div>
-      <input type="range" min="0" max="100" value="0" class="slider-container slider" id="songSeek" onchange="seekTo()">
-      <div id="total-duration" class="  total-duration">00:00</div>
+      <div class="slider-container">
+        <div id="current-time" class="current-time">0:00</div>
+        <input type="range" min="0" max="100" value="0" class="slider-container slider" id="songSeek" onchange="seekTo()">
+        <div id="total-duration" class="  total-duration">00:00</div>
+      </div>
     </div>
-    </div>
-
-  </div>
-  </div>
-  <div>
-    <select id="playlistDropdown" class="dropdown">
-    </select>
-    <script>
-      const playlists = {{ data| tojson}}
-      const playlistDropdown = document.getElementById("playlistDropdown");
-      let player;
-      for (var key in playlists) {
-        let option = document.createElement("option");
-        option.text = key;
-        console.log(key);
-        playlistDropdown.add(option);
-      }
-    </script>
-    <script>
-      document.getElementById("playlistDropdown").addEventListener("change", () => {
+    <div>
+      <select id="playlistDropdown" class="dropdown"></select>
+      <script>
+        const playlists = {{ data|tojson }};
+        const playlistDropdown = document.getElementById("playlistDropdown");
+        for (var key in playlists) {
+          let option = document.createElement("option");
+          option.text = key;
+          console.log(key);
+          playlistDropdown.add(option);
+        }
+      </script>
+      <script>
+        document.getElementById("playlistDropdown").addEventListener("change", () => {
         updatePlaylist();
       });
-    </script>
-
-  </div>
-  <script src="https://sdk.scdn.co/spotify-player.js"></script>
-  <script>
-    let secondCounter;
-    let currentTrack;
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      const token = {{ access_token| tojson}};
-      player = new Spotify.Player({
-      name: 'Mixify',
-      getOAuthToken: cb => { cb(token); },
-      volume: 1.0
-    });
-
-    // Ready
-    player.addListener('ready', ({ device_id }) => {
-      console.log('Ready with Device ID', device_id);
-    });
-
-    // Not Ready
-    player.addListener('not_ready', ({ device_id }) => {
-      console.log('Device ID has gone offline', device_id);
-    });
-
-    player.addListener('initialization_error', ({ message }) => {
-      console.error(message);
-    });
-
-    player.addListener('authentication_error', ({ message }) => {
-      console.error(message);
-    });
-
-    player.addListener('account_error', ({ message }) => {
-      console.error(message);
-    });
-//TODO Add seek to here 
-    document.getElementById("songSeek").onchange = function () {
-      value = document.getElementById("songSeek").value;
-      player.seek((value/100) * trackDuration);
-    }
-    document.getElementById('nextSong').onclick = function () {
-      player.nextTrack();
-      clearInterval(secondCounter);
-      secondCounter = setInterval(addASecond, 1000);
-    };
-    document.getElementById('togglePlay').onclick = function () {
-      player.togglePlay();
-      IsPaused ? IsPaused = false : IsPaused = true;
-      if (IsPaused){
-        IsPaused = false;
-        clearInterval(secondCounter);
-
-      } else {
-        IsPaused = true;
-        secondCounter = setInterval(addASecond, 1000);
-      }
-    };
-    document.getElementById('lastSong').onclick = function () {
-      player.previousTrack();
-    };
-    player.addListener('player_state_changed', ({
-      position,
-      duration,
-      paused,
-      track_window: { current_track }
-    }) => {
-      IsPaused = paused;
-      if (!IsPaused) {
-        clearInterval(secondCounter);
-        secondCounter = setInterval(addASecond, 1000);
-      }
-      trackPosition = position;
-      trackDuration = duration;
-      document.getElementById("songSeek").value = (position/duration)*100;
-      document.getElementById("songName").textContent = current_track.name;
-      document.getElementById("songArt").src = current_track.album.images[0].url;
-      document.getElementById("total-duration").textContent = timeConverter(duration);
-      document.getElementById("current-time").textContent = timeConverter(trackPosition);
-      currentTrack = current_track;
-      currentTrackURI = current_track.uri;
-      highlightTrack(current_track.name, current_track.artists[0]["name"]);
-    });
-
-    player.connect();
-  }
-  </script>
+      </script>
+    </div>
     <div class="btn-group button">
-    <button id="Save"> Save </button>
-    <button id="Play Playlist"> Play Playlist </button>
+      <button id="Save"> Save </button>
+      <button id="Play Playlist"> Play Playlist </button>
     </div>
     <table id="Playlist" class = "darkTable">
       <tr>
@@ -148,11 +66,5 @@
         <td>Stop</td>
       </tr>
     </table>
-  <script>
-    document.getElementById("Save").onclick = function() {
-      let savedPlaylist = hashPlaylist();
-    }
-  </script>
 </body>
-
 </html>
