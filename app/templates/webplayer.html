@@ -34,6 +34,7 @@
     <script>
       const playlists = {{ data| tojson}}
       const playlistDropdown = document.getElementById("playlistDropdown");
+      let player;
       for (var key in playlists) {
         let option = document.createElement("option");
         option.text = key;
@@ -42,7 +43,9 @@
       }
     </script>
     <script>
-      document.getElementById("playlistDropdown").addEventListener("change", updatePlaylist);
+      document.getElementById("playlistDropdown").addEventListener("change", () => {
+        updatePlaylist();
+      });
     </script>
 
   </div>
@@ -52,7 +55,7 @@
     let currentTrack;
     window.onSpotifyWebPlaybackSDKReady = () => {
       const token = {{ access_token| tojson}};
-      const player = new Spotify.Player({
+      player = new Spotify.Player({
       name: 'Mixify',
       getOAuthToken: cb => { cb(token); },
       volume: 1.0
@@ -86,6 +89,8 @@
     }
     document.getElementById('nextSong').onclick = function () {
       player.nextTrack();
+      clearInterval(secondCounter);
+      secondCounter = setInterval(addASecond, 1000);
     };
     document.getElementById('togglePlay').onclick = function () {
       player.togglePlay();
@@ -109,8 +114,13 @@
       track_window: { current_track }
     }) => {
       IsPaused = paused;
+      if (!IsPaused) {
+        clearInterval(secondCounter);
+        secondCounter = setInterval(addASecond, 1000);
+      }
       trackPosition = position;
       trackDuration = duration;
+      document.getElementById("songSeek").value = (position/duration)*100;
       document.getElementById("songName").textContent = current_track.name;
       document.getElementById("songArt").src = current_track.album.images[0].url;
       document.getElementById("total-duration").textContent = timeConverter(duration);
