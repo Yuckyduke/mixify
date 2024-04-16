@@ -1,5 +1,6 @@
 // MARK: Global
 let Player;
+
 function timeConverter(msTime) {
   seconds = Math.floor((msTime % 60000)/1000);
   minutes = Math.floor(msTime/60000);
@@ -24,38 +25,38 @@ function handleSpotify(player) {
   let currentTrack;
   let secondCounter;
   // Ready
-  player.addListener('ready', ({ device_id }) => {
+  Player.addListener('ready', ({ device_id }) => {
     console.log('Ready with Device ID', device_id);
   });
 
   // Not Ready
-  player.addListener('not_ready', ({ device_id }) => {
+  Player.addListener('not_ready', ({ device_id }) => {
     console.log('Device ID has gone offline', device_id);
   });
 
-  player.addListener('initialization_error', ({ message }) => {
+  Player.addListener('initialization_error', ({ message }) => {
     console.error(message);
   });
 
-  player.addListener('authentication_error', ({ message }) => {
+  Player.addListener('authentication_error', ({ message }) => {
     console.error(message);
   });
 
-  player.addListener('account_error', ({ message }) => {
+  Player.addListener('account_error', ({ message }) => {
     console.error(message);
   });
   //TODO Add seek to here
   document.getElementById("songSeek").onchange = function () {
     value = document.getElementById("songSeek").value;
-    player.seek((value/100) * trackDuration);
+    Player.seek((value/100) * trackDuration);
   }
   document.getElementById('nextSong').onclick = function () {
-    player.nextTrack();
+    Player.nextTrack();
     clearInterval(secondCounter);
     secondCounter = setInterval(addASecond, 1000);
   };
   document.getElementById('togglePlay').onclick = function () {
-    player.togglePlay();
+    Player.togglePlay();
     IsPaused ? IsPaused = false : IsPaused = true;
     if (IsPaused) {
       IsPaused = false;
@@ -66,9 +67,9 @@ function handleSpotify(player) {
     }
   };
   document.getElementById('lastSong').onclick = function () {
-    player.previousTrack();
+    Player.previousTrack();
   };
-  player.addListener('player_state_changed', ({
+  Player.addListener('player_state_changed', ({
     position,
     duration,
     paused,
@@ -90,7 +91,7 @@ function handleSpotify(player) {
     currentTrackURI = current_track.uri;
     highlightTrack(current_track.name, current_track.artists[0]["name"]);
   });
-  player.connect();
+  Player.connect();
 }
 
 // TODO: Add ability to start and stop song based off user selected times.
