@@ -81,6 +81,7 @@ function handleSpotify(player) {
     }
     trackPosition = position;
     trackDuration = duration;
+    document.getElementById("songSeek").value = (trackPosition/trackDuration)*100;
     document.getElementById("songName").textContent = current_track.name;
     document.getElementById("songArt").src = current_track.album.images[0].url;
     document.getElementById("total-duration").textContent = timeConverter(duration);
