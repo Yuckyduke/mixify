@@ -2,7 +2,7 @@ from app import app
 from flask import render_template, request, url_for, redirect, session
 from app import spotify
 
-
+#handler instance
 mySpot = spotify.spotifyHandler("01f4d277eb0a45a9a5fbd08cce6a6afe")
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
@@ -20,9 +20,10 @@ def callback():
     auth_code = request.args.get("code")
     if auth_code is None:
     # TODO: Handle error
-        return redirect(url_for("index"))
+        return redirect(url_for("error"))
     token_data = mySpot.getAccessToken(auth_code)
     accessToken = token_data.get("access_token")
+    #hash our access token so that we can use later
     session['access_token'] = accessToken
     return redirect(url_for("webplayer"))
 
@@ -40,8 +41,11 @@ def webplayer():
 @app.route('/process_data', methods=['POST'])
 def process_data():
   # TODO: Wrap this in a try:except:
-    data = request.get_json()  # Assumes data is sent as JSON
-    return mySpot.getPlaylistSongs(session.get("access_token"), data["playlist"])
+    try:
+        data = request.get_json()  # Assumes data is sent as JSON
+        return mySpot.getPlaylistSongs(session.get("access_token"), data["playlist"])
+    except:
+        return redirect(url_for("error"))
 
 @app.route('/error')
 def error():
