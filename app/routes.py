@@ -3,7 +3,7 @@ from flask import render_template, request, url_for, redirect, session
 from app import spotify
 
 #handler instance
-mySpot = spotify.spotifyHandler("01f4d277eb0a45a9a5fbd08cce6a6afe")
+mySpot = spotify.spotifyHandler()
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
 #decorator linking webpage and function
