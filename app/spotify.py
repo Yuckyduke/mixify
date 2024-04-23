@@ -22,7 +22,7 @@ class spotifyHandler:
         self.redirect_uri = "http://127.0.0.1:5000/callback"
         self.spot_url = "https://accounts.spotify.com/"
         self.params = {"client_id": self.clientID, "response_type": "code", "redirect_uri" :self.redirect_uri, "scope": self._scope}
-        self.secret = "bd5fb29c425c4d108f34f44a78bebb52"
+        self.secret = 
         self.spotifyTokenURL = 'https://accounts.spotify.com/api/token'
 
     def authenticate(self) -> redirect:
